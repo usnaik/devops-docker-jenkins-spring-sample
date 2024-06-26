@@ -13,27 +13,27 @@ pipeline {
         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t usnaik/jenkins-devops-integration .'
+                    sh 'docker build -t upendranaik/jenkins-devops-integration .'
                 }
             }
         }
         stage('Push image to Hub'){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u upendranaik -p ${dockerhubpwd}'
+                    withCredentials([string(credentialsId: 'DockerHubPwd', variable: 'DockerHubPwd')]) {
+                        sh 'docker login -u upendranaik -p ${DockerHubPwd}'
+                    }
+                    sh 'docker push upendranaik/jenkins-devops-integration'
+                }
+            }
+        }
 
-                   }
-                   sh 'docker push usnaik/jenkins-devops-integration'
-                }
-            }
-        }
-        stage('Deploy to k8s'){
-            steps{
-                script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
-                }
-            }
-        }
+        // stage('Deploy to k8s'){
+        //     steps{
+        //         script{
+        //             kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
+        //         }
+        //     }
+        // }
     }
 }
